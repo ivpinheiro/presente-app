@@ -9,7 +9,7 @@ export default function RootLayout() {
     InterBold: require("./../assets/fonts/Inter-Bold.ttf"),
   });
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
   );
