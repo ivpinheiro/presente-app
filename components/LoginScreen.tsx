@@ -13,7 +13,7 @@ import { Formik } from "formik";
 import axios from "axios";
 
 const LoginScreen = () => {
-  const handleLogin = async (values) => {
+  const handleLogin = async (values: any) => {
     const { email, password } = values;
     try {
       const response = await axios.post("http://seu-backend-url/auth/login", {
@@ -91,7 +91,7 @@ const LoginScreen = () => {
                 </View>
               </LinearGradient>
             </View>
-            <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+            <TouchableOpacity onPress={() => handleSubmit()}>
               <LinearGradient
                 colors={["#5859e9", "#52337c"]}
                 style={styles.buttonGradient}
@@ -135,7 +135,6 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1,
     paddingLeft: 10,
-    borderWidth: 0,
   },
   banner: {
     height: 200,
@@ -145,7 +144,7 @@ const styles = StyleSheet.create({
   containerLogo: {
     flexDirection: "row",
     alignItems: "center",
-    gap: "10px",
+    gap: 10,
   },
   bannerText: {
     display: "flex",
