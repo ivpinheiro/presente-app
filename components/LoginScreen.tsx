@@ -11,27 +11,30 @@ import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Formik } from "formik";
 import axios from "axios";
+import { useAuth } from "@/app/context/AuthContext";
 
 const LoginScreen = () => {
-  const handleLogin = async (values: any) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { onLogin, onRegister } = useAuth();
+
+  const login = async (values: any) => {
     const { email, password } = values;
-    try {
-      const response = await axios.post("http://seu-backend-url/auth/login", {
-        email: values.email,
-        password: values.password,
-      });
-      if (response.data.access_token) {
-        // Armazene o token usando AsyncStorage ou qualquer outra abordagem segura
-        // AsyncStorage.setItem('access_token', response.data.access_token);
-        console.log("Login successful", response.data.access_token);
-      } else {
-        Alert.alert("Login failed", "No token returned");
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Login failed", "Invalid credentials");
+    console.log(email + password);
+    const result = await onLogin!(email, password);
+    if (result && result.error) {
+      alert(result.msg);
     }
   };
+
+  // const resgister = async () => {
+  //   const result = await onRegister!(email, password);
+  //   if (result && result.error) {
+  //     alert(result.msg);
+  //   } else {
+  //     login();
+  //   }
+  // };
 
   return (
     <View style={{ flex: 1 }}>
@@ -46,10 +49,7 @@ const LoginScreen = () => {
           <Text style={styles.bannerText}>presente!</Text>
         </View>
       </LinearGradient>
-      <Formik
-        initialValues={{ email: "", password: "" }}
-        onSubmit={handleLogin}
-      >
+      <Formik initialValues={{ email: "", password: "" }} onSubmit={login}>
         {({ handleChange, handleBlur, handleSubmit, values }) => (
           <View style={styles.container}>
             <View style={styles.inputContainer}>
