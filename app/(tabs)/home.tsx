@@ -4,7 +4,7 @@ import React from "react";
 export default function Home() {
   return (
     <View>
-      <Text style={{ fontFamily: "Inter" }}>home</Text>
+      <Text>home</Text>
     </View>
   );
 }

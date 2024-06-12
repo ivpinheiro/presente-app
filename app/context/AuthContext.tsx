@@ -10,7 +10,7 @@ interface AuthProps {
 }
 
 const TOKEN_KEY = "my-jwt";
-export const API_URL = "http://localhost/api";
+export const API_URL = "http://192.168.1.31:5000";
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -26,7 +26,6 @@ export const AuthProvider = ({ children }: any) => {
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
-      console.log("stored", token);
       if (token) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         setAuthState({ token: token, authenticated: true });
@@ -45,14 +44,14 @@ export const AuthProvider = ({ children }: any) => {
   const login = async (email: string, password: string) => {
     try {
       const result = await axios.post(`${API_URL}/login`, { email, password });
-      console.log("login result:", result.data.access_token);
+      setAuthState({ token: result.data.access_token, authenticated: true });
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${result.data.access_token}`;
       await SecureStore.setItemAsync(TOKEN_KEY, result.data.access_token);
       return result;
     } catch (e) {
-      return { error: true, msg: (e as any).response.data.msg };
+      return { error: true, msg: (e as any).response.data };
     }
   };
 

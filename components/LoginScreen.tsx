@@ -4,13 +4,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
   StyleSheet,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Formik } from "formik";
-import axios from "axios";
 import { useAuth } from "@/app/context/AuthContext";
 
 const LoginScreen = () => {
@@ -18,12 +16,19 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const { onLogin, onRegister } = useAuth();
 
-  const login = async (values: any) => {
+  const login = async (values: { email: string; password: string }) => {
     const { email, password } = values;
-    console.log(email + password);
-    const result = await onLogin!(email, password);
-    if (result && result.error) {
-      alert(result.msg);
+    try {
+      const result = await onLogin!(email, password);
+      if (result && result.error) {
+        alert(result.msg);
+      } else if (result && result.data) {
+        console.log("Login successful");
+      } else {
+        alert("Unexpected error occurred");
+      }
+    } catch (error) {
+      alert("An error occurred during login");
     }
   };
 
