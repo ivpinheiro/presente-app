@@ -9,8 +9,8 @@ interface AuthProps {
   onLogout?: () => Promise<any>;
 }
 
-const TOKEN_KEY = "my-jwt";
-export const API_URL = "http://192.168.1.31:5000";
+const TOKEN_KEY = "jwt-token";
+export const API_URL = process.env.EXPO_PUBLIC_API_URL;
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -23,15 +23,22 @@ export const AuthProvider = ({ children }: any) => {
     authenticated: boolean | null;
   }>({ token: null, authenticated: null });
 
-  useEffect(() => {
-    const loadToken = async () => {
+  const loadToken = async () => {
+    const activeAuth = process.env.EXPO_PUBLIC_AUTH === "true";
+    if (activeAuth) {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
       if (token) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        setAuthState({ token: token, authenticated: true });
+        setAuthState({ token: null, authenticated: true });
       }
-    };
-  });
+    } else {
+      setAuthState({ token: "jwt-token", authenticated: true });
+    }
+  };
+
+  useEffect(() => {
+    loadToken();
+  }, []);
 
   const register = async (email: string, password: string) => {
     try {
