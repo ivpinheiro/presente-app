@@ -12,10 +12,67 @@ import { Formik } from "formik";
 import { useAuth } from "@/app/context/AuthContext";
 
 const ProfileScreen = () =>{
+    const [email, setEmail] = useState('cora.almeida@gmail.com');
+    const [name, setName] = useState('Cora Almeida');
+    const [password, setPassword] = useState('*******');
+    const [isEmailEditable, setIsEmailEditable] = useState(false);
+    const [isNameEditable, setIsNameEditable] = useState(false);
+    const [isPasswordEditable, setIsPasswordEditable] = useState(false);
+
     return (
-        <View>
-          <Text>TESTING</Text>
+      <View style={styles.container}>
+      <LinearGradient
+        colors={["#5859e9", "#52337c"]}
+        style={styles.banner}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+      >
+        <View style={styles.circularContainer}>
+          <FontAwesome5 name="user" size={50} color="black" />
         </View>
+      </LinearGradient>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>e-mail</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          editable={isEmailEditable}
+          placeholder="cora.almeida@gmail.com"
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <View style={styles.row}>
+          <Text style={styles.label}>Nome</Text>
+          <TouchableOpacity onPress={() => setIsNameEditable(!isNameEditable)}>
+            <FontAwesome5 name="pen" size={15} color="black" style={styles.icon} />
+          </TouchableOpacity>
+        </View>
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+          editable={isNameEditable}
+          placeholder="Cora Almeida"
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <View style={styles.row}>
+          <Text style={styles.label}>Senha</Text>
+          <TouchableOpacity onPress={() => setIsPasswordEditable(!isPasswordEditable)}>
+            <FontAwesome5 name="pen" size={15} color="black" style={styles.icon} />
+          </TouchableOpacity>
+        </View>
+        <TextInput
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          editable={isPasswordEditable}
+          placeholder="*******"
+          secureTextEntry
+        />
+      </View>
+    </View>
       );
 }
 
@@ -48,10 +105,34 @@ const styles = StyleSheet.create({
       paddingLeft: 10,
     },
     banner: {
-      height: 200,
-      justifyContent: "center",
-      alignItems: "center",
-    },
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: 150,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      },
+      circularContainer: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: 120,
+        height: 120,
+        marginTop: -20, // Metade da altura para centralizar verticalmente
+        marginLeft: -60, // Metade da largura para centralizar horizontalmente
+        borderRadius: 60,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+      },
+      profileImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 60, // Para tornar a imagem circular
+      },
     containerLogo: {
       flexDirection: "row",
       alignItems: "center",
@@ -81,6 +162,14 @@ const styles = StyleSheet.create({
       fontSize: 18,
       fontWeight: "bold",
       color: "#fff",
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    icon: {
+      marginRight: 8,
     },
   });
   
