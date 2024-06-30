@@ -10,8 +10,8 @@ interface AuthProps {
   onLogout?: () => Promise<any>;
 }
 
-const TOKEN_KEY = "jwt-token";
 export const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const TOKEN_KEY = "jwt-token";
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: any) => {
         throw new Error("Token not found");
       }
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      const result = await axios.get(`${API_URL}/user/me`);
+      const result = await axios.get(`${API_URL}/user/get`);
       return result.data;
     } catch (error) {
       console.error("Error loading user:", error);

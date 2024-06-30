@@ -11,6 +11,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useAuth } from "@/app/context/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
+import { API_URL } from "@/app/context/AuthContext";
+import axios from "axios";
 
 const ProfileScreen = () => {
   const { onGetUser } = useAuth();
@@ -37,13 +39,7 @@ const ProfileScreen = () => {
     setIsButtonVisible(true);
   };
 
-  const handleConfirmChanges = () => {
-    // Substitui por chamada a API
-    console.log("Alterações confirmadas:");
-    console.log("Email:", email);
-    console.log("Nome:", name);
-    console.log("Senha:", password);
-
+  const handleConfirmChanges = async () => {
     // Atualizar estados para não editáveis
     setIsEmailEditable(false);
     setIsNameEditable(false);
@@ -51,6 +47,18 @@ const ProfileScreen = () => {
 
     // Ocultar botão de confirmação
     setIsButtonVisible(false);
+    try {
+      if (name && password) {
+        await axios.post(`${API_URL}/user/update-password`, { name });
+        await axios.post(`${API_URL}/user/update-name`, { name });
+      } else if (name) {
+        await axios.post(`${API_URL}/user/update-password`, { name });
+      } else {
+        await axios.post(`${API_URL}/user/update-name`, { name });
+      }
+    } catch (error) {
+      console.error("Não foi possível atualizar:", error);
+    }
   };
 
   useFocusEffect(
