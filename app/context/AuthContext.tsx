@@ -6,6 +6,7 @@ interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
   onRegister?: (email: string, password: string) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
+  onGetUser?: () => Promise<any>;
   onLogout?: () => Promise<any>;
 }
 
@@ -62,6 +63,21 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
 
+  const loadUser = async () => {
+    try {
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
+      if (!token) {
+        throw new Error("Token not found");
+      }
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const result = await axios.get(`${API_URL}/user/me`);
+      return result.data;
+    } catch (error) {
+      console.error("Error loading user:", error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     await SecureStore.deleteItemAsync(TOKEN_KEY);
     axios.defaults.headers.common["Authorization"] = "";
@@ -70,6 +86,7 @@ export const AuthProvider = ({ children }: any) => {
   const value = {
     onRegister: register,
     onLogin: login,
+    onGetUser: loadUser,
     onLogout: logout,
     authState,
   };
