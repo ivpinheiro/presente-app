@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
-import { Picker } from '@react-native-picker/picker';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -9,29 +16,41 @@ const { width } = Dimensions.get("window");
 
 const HistoryScreen: React.FC = () => {
   const [selectedStartDate, setSelectedStartDate] = useState({
-    day: '1',
-    month: 'Janeiro',
-    year: '2023',
+    day: "1",
+    month: "Janeiro",
+    year: "2023",
   });
   const [selectedEndDate, setSelectedEndDate] = useState({
-    day: '1',
-    month: 'Janeiro',
-    year: '2023',
+    day: "1",
+    month: "Janeiro",
+    year: "2023",
   });
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   //Esses items devem vir das atividades cadastradas no backend
   const [items, setItems] = useState([
-    { label: 'Selecione a atividade', value: '' },
-    { label: 'Atividade 1', value: 'atividade1' },
-    { label: 'Atividade 2', value: 'atividade2' },
+    { label: "Selecione a atividade", value: "" },
+    { label: "Atividade 1", value: "atividade1" },
+    { label: "Atividade 2", value: "atividade2" },
   ]);
 
   const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
-  const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  const months = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
   const years = Array.from({ length: 100 }, (_, i) => (2023 - i).toString());
 
-  
   const [showHistoryButton, setShowHistoryButton] = useState(false);
   const [showPercentage, setShowPercentage] = useState(false);
   const [randomPercentage, setRandomPercentage] = useState(0);
@@ -40,23 +59,29 @@ const HistoryScreen: React.FC = () => {
   const logs: string[] = [];
   // Deve ser enviado para o backend
   const handleSelection = () => {
-    const log = `Data de Início: ${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}, `
-      + `Data de Fim: ${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}, `
-      + `Atividade Selecionada: ${selectedActivity}`;
+    const log =
+      `Data de Início: ${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}, ` +
+      `Data de Fim: ${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}, ` +
+      `Atividade Selecionada: ${selectedActivity}`;
     logs.push(log);
     console.log(log);
 
-    
-    if (selectedStartDate.day && selectedStartDate.month && selectedStartDate.year &&
-      selectedEndDate.day && selectedEndDate.month && selectedEndDate.year &&
-      selectedActivity) {
-      setShowHistoryButton(false); 
-      setShowPercentage(true); 
-      const randomPercent = Math.floor(Math.random() * 101); 
-      setRandomPercentage(randomPercent); 
+    if (
+      selectedStartDate.day &&
+      selectedStartDate.month &&
+      selectedStartDate.year &&
+      selectedEndDate.day &&
+      selectedEndDate.month &&
+      selectedEndDate.year &&
+      selectedActivity
+    ) {
+      setShowHistoryButton(false);
+      setShowPercentage(true);
+      const randomPercent = Math.floor(Math.random() * 101);
+      setRandomPercentage(randomPercent);
     } else {
-      setShowHistoryButton(false); 
-      setShowPercentage(false); 
+      setShowHistoryButton(false);
+      setShowPercentage(false);
     }
   };
 
@@ -81,13 +106,21 @@ const HistoryScreen: React.FC = () => {
 
     return (
       <View style={styles.percentageContainer}>
-        <FontAwesome5 name={icon as any} size={70} color={textColor} style={styles.icon} />
+        <FontAwesome5
+          name={icon as any}
+          size={70}
+          color={textColor}
+          style={styles.icon}
+        />
         <Text style={[styles.percentageText, { color: textColor }]}>
           {randomPercentage}%
         </Text>
         {/* Botão "Detalhes" */}
         <View style={styles.detailsButtonContainer}>
-          <TouchableOpacity style={styles.detailsButton} onPress={handleDetailsPress}>
+          <TouchableOpacity
+            style={styles.detailsButton}
+            onPress={handleDetailsPress}
+          >
             <LinearGradient
               colors={["#5859e9", "#52337c"]}
               start={{ x: 0, y: 0 }}
@@ -107,13 +140,17 @@ const HistoryScreen: React.FC = () => {
     console.log("Botão Detalhes pressionado");
   };
 
-  
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.headerContainer}>
-          <FontAwesome5 name="calendar-check" size={54} color="black" />
           <Text style={styles.headerText}>Ver histórico de presença</Text>
+          <FontAwesome5
+            name="calendar-check"
+            size={54}
+            color="black"
+            style={styles.icon}
+          />
         </View>
 
         <View style={styles.dateContainer}>
@@ -126,7 +163,7 @@ const HistoryScreen: React.FC = () => {
                 setSelectedStartDate({ ...selectedStartDate, day: itemValue })
               }
             >
-              {days.map(day => (
+              {days.map((day) => (
                 <Picker.Item key={day} label={day} value={day} />
               ))}
             </Picker>
@@ -148,7 +185,7 @@ const HistoryScreen: React.FC = () => {
                 setSelectedStartDate({ ...selectedStartDate, year: itemValue })
               }
             >
-              {years.map(year => (
+              {years.map((year) => (
                 <Picker.Item key={year} label={year} value={year} />
               ))}
             </Picker>
@@ -165,7 +202,7 @@ const HistoryScreen: React.FC = () => {
                 setSelectedEndDate({ ...selectedEndDate, day: itemValue })
               }
             >
-              {days.map(day => (
+              {days.map((day) => (
                 <Picker.Item key={day} label={day} value={day} />
               ))}
             </Picker>
@@ -187,7 +224,7 @@ const HistoryScreen: React.FC = () => {
                 setSelectedEndDate({ ...selectedEndDate, year: itemValue })
               }
             >
-              {years.map(year => (
+              {years.map((year) => (
                 <Picker.Item key={year} label={year} value={year} />
               ))}
             </Picker>
@@ -203,7 +240,7 @@ const HistoryScreen: React.FC = () => {
           setItems={setItems}
           placeholder="Selecione a atividade"
           style={styles.activityPicker}
-          onChangeValue={handleSelection} 
+          onChangeValue={handleSelection}
         />
 
         {showHistoryButton && (
@@ -223,7 +260,6 @@ const HistoryScreen: React.FC = () => {
         )}
 
         {showPercentage && renderPercentageComponent()}
-
       </ScrollView>
     </View>
   );
@@ -238,18 +274,21 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "space-between",
     padding: 20,
+    marginTop: 90,
   },
   headerContainer: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    justifyContent: "center",
     marginBottom: 20,
+    padding: 10,
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     marginLeft: 10,
+    color: "#242760",
   },
   dateContainer: {
     flexDirection: "row",
@@ -286,14 +325,14 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 10,
     overflow: "hidden",
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   confirmButtonInner: {
     width: "100%",
     height: "100%",
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
   },
   confirmButtonText: {
@@ -314,13 +353,15 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
+    color: "#242760",
+    fontSize: 80,
   },
   detailsButtonContainer: {
     marginTop: 20,
     alignItems: "center",
   },
   detailsButton: {
-    width: width - 40, 
+    width: width - 40,
     paddingVertical: 20,
     paddingHorizontal: 16,
     borderRadius: 5,
