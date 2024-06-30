@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { Formik } from 'formik';
-import CustomCheckbox from './CustomCheckbox'; // Adjust the path as necessary
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Formik } from "formik";
+import CustomCheckbox from "./CustomCheckbox"; // Adjust the path as necessary
+import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 const RegisterDisciplineScreen: React.FC = () => {
   const initialDays = [
-    { day: 'Segunda-feira', isChecked: false, startTime: '', endTime: '' },
-    { day: 'Terça-feira', isChecked: false, startTime: '', endTime: '' },
-    { day: 'Quarta-feira', isChecked: false, startTime: '', endTime: '' },
-    { day: 'Quinta-feira', isChecked: false, startTime: '', endTime: '' },
-    { day: 'Sexta-feira', isChecked: false, startTime: '', endTime: '' },
-    { day: 'Sábado', isChecked: false, startTime: '', endTime: '' },
-    { day: 'Domingo', isChecked: false, startTime: '', endTime: '' },
+    { day: "Segunda-feira", isChecked: false, startTime: "", endTime: "" },
+    { day: "Terça-feira", isChecked: false, startTime: "", endTime: "" },
+    { day: "Quarta-feira", isChecked: false, startTime: "", endTime: "" },
+    { day: "Quinta-feira", isChecked: false, startTime: "", endTime: "" },
+    { day: "Sexta-feira", isChecked: false, startTime: "", endTime: "" },
+    { day: "Sábado", isChecked: false, startTime: "", endTime: "" },
+    { day: "Domingo", isChecked: false, startTime: "", endTime: "" },
   ];
 
   const handleRegister = (values: any) => {
@@ -23,39 +33,60 @@ const RegisterDisciplineScreen: React.FC = () => {
   return (
     <View style={{ flex: 1 }}>
       <LinearGradient
-        colors={['#5859e9', '#52337c']}
+        colors={["#5859e9", "#52337c"]}
         style={styles.banner}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
       >
+        <Link href="/(tabs)/home" asChild>
+          <Pressable style={styles.backButtonContainer}>
+            <Ionicons
+              name="arrow-back-sharp"
+              size={24}
+              color="black"
+              style={styles.backButton}
+            />
+          </Pressable>
+        </Link>
         <View style={styles.containerLogo}>
           <FontAwesome5 name="calendar-check" size={54} color="white" />
           <Text style={styles.bannerText}>Cadastrar Disciplina</Text>
         </View>
       </LinearGradient>
       <Formik
-        initialValues={{ disciplineName: '', days: initialDays }}
+        initialValues={{ disciplineName: "", days: initialDays }}
         onSubmit={handleRegister}
       >
-        {({ handleChange, handleBlur, handleSubmit, setFieldValue, values }) => (
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          setFieldValue,
+          values,
+        }) => (
           <ScrollView contentContainerStyle={styles.container}>
             <TextInput
               style={styles.input}
               placeholder="Nome da disciplina"
               placeholderTextColor="#888"
-              onChangeText={handleChange('disciplineName')}
-              onBlur={handleBlur('disciplineName')}
+              onChangeText={handleChange("disciplineName")}
+              onBlur={handleBlur("disciplineName")}
               value={values.disciplineName}
             />
             {values.days.map((day, index) => (
               <View key={index} style={styles.dayContainer}>
                 <CustomCheckbox
                   isChecked={day.isChecked}
-                  onPress={() => setFieldValue(`days[${index}].isChecked`, !day.isChecked)}
+                  onPress={() =>
+                    setFieldValue(`days[${index}].isChecked`, !day.isChecked)
+                  }
                 />
                 <Text style={styles.dayText}>{day.day}</Text>
                 <TextInput
-                  style={[styles.timeInput, !day.isChecked && styles.disabledInput]}
+                  style={[
+                    styles.timeInput,
+                    !day.isChecked && styles.disabledInput,
+                  ]}
                   placeholder="Início"
                   placeholderTextColor="#888"
                   onChangeText={handleChange(`days[${index}].startTime`)}
@@ -64,7 +95,10 @@ const RegisterDisciplineScreen: React.FC = () => {
                   editable={day.isChecked}
                 />
                 <TextInput
-                  style={[styles.timeInput, !day.isChecked && styles.disabledInput]}
+                  style={[
+                    styles.timeInput,
+                    !day.isChecked && styles.disabledInput,
+                  ]}
                   placeholder="Fim"
                   placeholderTextColor="#888"
                   onChangeText={handleChange(`days[${index}].endTime`)}
@@ -76,7 +110,7 @@ const RegisterDisciplineScreen: React.FC = () => {
             ))}
             <TouchableOpacity onPress={() => handleSubmit()}>
               <LinearGradient
-                colors={['#5859e9', '#52337c']}
+                colors={["#5859e9", "#52337c"]}
                 style={styles.buttonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -94,41 +128,50 @@ const RegisterDisciplineScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
+  },
+  backButtonContainer: {
+    alignSelf: "flex-start",
+    padding: 5,
+  },
+  backButton: {
+    color: "white",
+    width: "100%",
+    fontSize: 32,
   },
   banner: {
     height: 150,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   containerLogo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   bannerText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 10,
     padding: 10,
     fontSize: 16,
-    width: '100%',
+    width: "100%",
     marginBottom: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
   },
   dayContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
-    width: '100%',
+    width: "100%",
   },
   dayText: {
     flex: 2,
@@ -136,32 +179,32 @@ const styles = StyleSheet.create({
   },
   timeInput: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 10,
     padding: 10,
     fontSize: 16,
     flex: 1,
     marginHorizontal: 4,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
   },
   disabledInput: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: "#e0e0e0",
   },
   buttonGradient: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginTop: 20,
     height: 50,
-    width: '60%',
+    width: "60%",
   },
   buttonText: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
 });
 

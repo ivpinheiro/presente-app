@@ -7,8 +7,11 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Pressable,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { Link } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -296,6 +299,11 @@ const HomeScreen: React.FC = () => {
           </TouchableOpacity>
         ))}
       </View>
+      <Link href="/register-activity" asChild style={styles.addButtonContainer}>
+        <Pressable>
+          <Ionicons name="add-circle-outline" style={styles.addButton} />
+        </Pressable>
+      </Link>
       {/* <View style={styles.statsContainer}>
         <Text style={styles.statsText}>Presenças: {presenceCount}</Text>
         <Text style={styles.statsText}>Ausências: {absenceCount}</Text>
@@ -455,6 +463,13 @@ const styles = StyleSheet.create({
   statsText: {
     fontSize: 18,
     marginBottom: 5,
+  },
+  addButtonContainer: {
+    alignSelf: "flex-end",
+  },
+  addButton: {
+    color: "#242760",
+    fontSize: 50,
   },
 });
 
