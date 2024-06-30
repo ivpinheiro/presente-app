@@ -14,7 +14,7 @@ const HomeScreen: React.FC = () => {
 
 
   // Gerar listas de valores para os seletores
-  const years = Array.from({ length: 71 }, (_, index) => 1960 + index); // 1960 to 2030
+  const years = Array.from({ length: 71 }, (_, index) => 1960 + index);
   const months = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
@@ -33,8 +33,8 @@ const HomeScreen: React.FC = () => {
   // Data atual
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
-  const currentMonthIndex = currentDate.getMonth(); // Janeiro é 0, Dezembro é 11
-  const currentDayOfMonth = currentDate.getDate() - 1; // Dia do mês atual
+  const currentMonthIndex = currentDate.getMonth(); 
+  const currentDayOfMonth = currentDate.getDate() - 1; 
 
   // Efeito para rolar para o ano, mês e dia do mês atuais ao abrir a tela
   useEffect(() => {
