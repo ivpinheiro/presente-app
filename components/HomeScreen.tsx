@@ -21,7 +21,12 @@ const { width } = Dimensions.get("window");
 const HomeScreen: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dayOfWeek, setDayOfWeek] = useState<string>("");
-  const [dayActivities, setDayActivities] = useState<Array<string>>([]); // Array para armazenar as atividades do dia
+  const [dayActivities, setDayActivities] = useState<
+    Array<{ name: string; id: string; start: string }>
+  >([]); // Array para armazenar as atividades do dia
+  const [activitiesGlobal, setActivitiesGlobal] = useState<Array<string> | any>(
+    []
+  ); // Array para armazenar as atividades do dia
   const [selectedActivityIndex, setSelectedActivityIndex] = useState<
     number | null
   >(null); // Índice da atividade selecionada
@@ -127,11 +132,24 @@ const HomeScreen: React.FC = () => {
           // Obter atividades
           const activities = await getActivities();
           const dayIndex = new Date().getDay();
+          const actGlobal = activities?.data.flatMap((item: any) => {
+            return item.activitiesWeek.flatMap((it: any) => {
+              if (it.dayWeek === dayIndex.toString()) {
+                return item;
+              }
+              return [];
+            });
+          });
+          setActivitiesGlobal(actGlobal ? actGlobal : []);
           const act = activities?.data.flatMap((item: any) => {
             return item.activitiesWeek.flatMap((it: any) => {
               if (it.dayWeek === dayIndex.toString()) {
                 const activities = it.activityTime.map((dt: any) => {
-                  return `${item.title} - ${dt.start}hr às ${dt.end}hr`;
+                  return {
+                    name: `${item.title} - ${dt.start}hr às ${dt.end}hr`,
+                    id: item._id,
+                    start: dt.start,
+                  };
                 });
                 return activities;
               }
@@ -141,10 +159,8 @@ const HomeScreen: React.FC = () => {
           setDayActivities(act);
         } catch (error) {
           console.error("Error fetching activities:", error);
-          // Trate o erro conforme necessário
         }
       };
-
       fetchData();
     }, [currentYear, currentMonthIndex, currentDayOfMonth])
   );
@@ -173,11 +189,67 @@ const HomeScreen: React.FC = () => {
 
   // Função para lidar com a presença do usuário
   // Aqui pode ser usado para calcular o percentual de precença e enviar de volta pro backed
-  const handlePresence = () => {
+  const handlePresence = async () => {
     if (selectedActivityIndex !== null) {
-      console.log(
-        `Usuário presente na atividade: ${dayActivities[selectedActivityIndex]}`
-      );
+      const updatedActivity = activitiesGlobal.map((item: any) => {
+        if (item._id === dayActivities[selectedActivityIndex].id) {
+          return {
+            ...item,
+            activitiesWeek: item.activitiesWeek.map(
+              (activitiesWeekItem: any) => {
+                return {
+                  ...activitiesWeekItem,
+                  activityTime: activitiesWeekItem.activityTime.map(
+                    (activityTimeItem: any) => {
+                      if (
+                        activityTimeItem.start ===
+                        dayActivities[selectedActivityIndex].start
+                      ) {
+                        return {
+                          ...activityTimeItem,
+                          presenceActivity: [
+                            ...activityTimeItem.presenceActivity,
+                            {
+                              dateTime: currentDate,
+                              isPresent: true,
+                            },
+                          ],
+                        };
+                      }
+                      return activityTimeItem;
+                    }
+                  ),
+                };
+              }
+            ),
+          };
+        }
+        return item;
+      });
+      // console.log(
+      //   updatedActivity[0].activitiesWeek[0].activityTime[0].presenceActivity
+      // );
+      const { _id, ...updatedActivityNoId } = updatedActivity[0];
+      try {
+        return await axios.patch(
+          `${API_URL}/activities/${dayActivities[selectedActivityIndex].id}`,
+          updatedActivityNoId
+        );
+      } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+          console.error("Error message:", error.message);
+          if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Data:", error.response.data);
+          } else if (error.request) {
+            console.error("Request:", error.request);
+          } else {
+            console.error("Error:", error.message);
+          }
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
       setPresenceCount((prevCount) => prevCount + 1);
       setSelectedActivityIndex(null);
     }
@@ -185,11 +257,67 @@ const HomeScreen: React.FC = () => {
 
   // Função para lidar com a ausência do usuário
   // Aqui pode ser usado para calcular o percentual de precença e enviar de volta pro backed
-  const handleAbsence = () => {
+  const handleAbsence = async () => {
     if (selectedActivityIndex !== null) {
-      console.log(
-        `Usuário ausente na atividade: ${dayActivities[selectedActivityIndex]}`
-      );
+      const updatedActivity = activitiesGlobal.map((item: any) => {
+        if (item._id === dayActivities[selectedActivityIndex].id) {
+          return {
+            ...item,
+            activitiesWeek: item.activitiesWeek.map(
+              (activitiesWeekItem: any) => {
+                return {
+                  ...activitiesWeekItem,
+                  activityTime: activitiesWeekItem.activityTime.map(
+                    (activityTimeItem: any) => {
+                      if (
+                        activityTimeItem.start ===
+                        dayActivities[selectedActivityIndex].start
+                      ) {
+                        return {
+                          ...activityTimeItem,
+                          presenceActivity: [
+                            ...activityTimeItem.presenceActivity,
+                            {
+                              dateTime: currentDate,
+                              isPresent: false,
+                            },
+                          ],
+                        };
+                      }
+                      return activityTimeItem;
+                    }
+                  ),
+                };
+              }
+            ),
+          };
+        }
+        return item;
+      });
+      // console.log(
+      //   updatedActivity[0].activitiesWeek[0].activityTime[0].presenceActivity
+      // );
+      const { _id, ...updatedActivityNoId } = updatedActivity[0];
+      try {
+        return await axios.patch(
+          `${API_URL}/activities/${dayActivities[selectedActivityIndex].id}`,
+          updatedActivityNoId
+        );
+      } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+          console.error("Error message:", error.message);
+          if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Data:", error.response.data);
+          } else if (error.request) {
+            console.error("Request:", error.request);
+          } else {
+            console.error("Error:", error.message);
+          }
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
       setAbsenceCount((prevCount) => prevCount + 1);
       setSelectedActivityIndex(null);
     }
@@ -322,7 +450,7 @@ const HomeScreen: React.FC = () => {
             ]}
             onPress={() => handleActivityPress(index)}
           >
-            <Text>{activity}</Text>
+            <Text>{activity.name}</Text>
             {selectedActivityIndex === index && (
               <View style={styles.activityButtons}>
                 <TouchableOpacity
