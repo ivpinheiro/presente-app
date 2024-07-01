@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,9 @@ import {
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { API_URL } from "@/app/context/AuthContext";
+import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
@@ -65,44 +68,86 @@ const HomeScreen: React.FC = () => {
   const currentMonthIndex = currentDate.getMonth();
   const currentDayOfMonth = currentDate.getDate() - 1;
 
-  // Efeito para rolar para o ano, mês e dia do mês atuais ao abrir a tela
-  useEffect(() => {
-    setSelectedDate(
-      new Date(currentYear, currentMonthIndex, currentDayOfMonth)
-    );
-
-    // Rolar para o ano atual
-    if (yearsScrollViewRef.current) {
-      const yearIndex = years.findIndex((year) => year === currentYear);
-      const xOffsetYear = yearIndex * (width - 30);
-      yearsScrollViewRef.current.scrollTo({ x: xOffsetYear, animated: true });
+  const getActivities = async () => {
+    try {
+      return await axios.get(`${API_URL}/activities`);
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error message:", error.message);
+        if (error.response) {
+          console.error("Status:", error.response.status);
+          console.error("Data:", error.response.data);
+        } else if (error.request) {
+          console.error("Request:", error.request);
+        } else {
+          console.error("Error:", error.message);
+        }
+      } else {
+        console.error("Unexpected error:", error);
+      }
     }
+  };
 
-    // Rolar para o mês atual
-    if (monthsScrollViewRef.current) {
-      const xOffsetMonth = currentMonthIndex * (width - 30);
-      monthsScrollViewRef.current.scrollTo({ x: xOffsetMonth, animated: true });
-    }
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        setSelectedDate(
+          new Date(currentYear, currentMonthIndex, currentDayOfMonth)
+        );
 
-    // Rolar para o dia do mês atual
-    if (daysOfMonthScrollViewRef.current) {
-      const xOffsetDayOfMonth = currentDayOfMonth * (width - 30);
-      daysOfMonthScrollViewRef.current.scrollTo({
-        x: xOffsetDayOfMonth,
-        animated: true,
-      });
-    }
+        // Rolar para o ano atual
+        if (yearsScrollViewRef.current) {
+          const yearIndex = years.findIndex((year) => year === currentYear);
+          const xOffsetYear = yearIndex * (width - 30);
+          yearsScrollViewRef.current.scrollTo({
+            x: xOffsetYear,
+            animated: true,
+          });
+        }
 
-    // Simulação de atividades do dia para exemplo
-    // Deve ser puxado das atividades cadastradas, do backend
-    const activities = [
-      "Reunião 09:00 - 10:30",
-      "Almoço 12:00 - 13:00",
-      "Exercícios 17:30 - 18:30",
-    ];
-    setDayActivities(activities);
-    console.log("Day Activities:", activities);
-  }, [currentYear, currentMonthIndex, currentDayOfMonth]);
+        // Rolar para o mês atual
+        if (monthsScrollViewRef.current) {
+          const xOffsetMonth = currentMonthIndex * (width - 30);
+          monthsScrollViewRef.current.scrollTo({
+            x: xOffsetMonth,
+            animated: true,
+          });
+        }
+
+        // Rolar para o dia do mês atual
+        if (daysOfMonthScrollViewRef.current) {
+          const xOffsetDayOfMonth = currentDayOfMonth * (width - 30);
+          daysOfMonthScrollViewRef.current.scrollTo({
+            x: xOffsetDayOfMonth,
+            animated: true,
+          });
+        }
+
+        try {
+          // Obter atividades
+          const activities = await getActivities();
+          const dayIndex = new Date().getDay();
+          const act = activities?.data.flatMap((item: any) => {
+            return item.activitiesWeek.flatMap((it: any) => {
+              if (it.dayWeek === dayIndex.toString()) {
+                const dt_ = it.activityTime.map((dt: any) => {
+                  return " " + dt.start + "hr às " + dt.end + "hr";
+                });
+                return item.title + " - " + dt_;
+              }
+              return [];
+            });
+          });
+          setDayActivities(act);
+        } catch (error) {
+          console.error("Error fetching activities:", error);
+          // Trate o erro conforme necessário
+        }
+      };
+
+      fetchData();
+    }, [currentYear, currentMonthIndex, currentDayOfMonth])
+  );
 
   // Função para atualizar a data selecionada
   const updateSelectedDate = (
@@ -112,7 +157,7 @@ const HomeScreen: React.FC = () => {
   ) => {
     setSelectedDate(new Date(year, monthIndex, dayOfMonth));
     const dayIndex = new Date(year, monthIndex, dayOfMonth).getDay();
-    setDayOfWeek(daysOfWeek[dayIndex]);
+    setDayOfWeek(daysOfWeek[dayIndex - 1]);
   };
 
   // Para puxar as atividades para const activities, usar dayOfWeek
