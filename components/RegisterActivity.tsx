@@ -14,8 +14,13 @@ import { Formik } from "formik";
 import CustomCheckbox from "./CustomCheckbox"; // Adjust the path as necessary
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { API_URL } from "@/app/context/AuthContext";
+import { useAuth } from "@/app/context/AuthContext";
+import { router } from "expo-router";
+import axios from "axios";
 
 const RegisterDisciplineScreen: React.FC = () => {
+  const { onGetUser } = useAuth();
   const [initialDays, setDays] = useState([
     { day: "Segunda-feira", isChecked: false, startTime: "", endTime: "" },
     { day: "Terça-feira", isChecked: false, startTime: "", endTime: "" },
@@ -57,22 +62,97 @@ const RegisterDisciplineScreen: React.FC = () => {
     { day: "Sábado", number: 6 },
     { day: "Domingo", number: 7 },
   ];
-  const handleRegister = (values: { disciplineName: string; days: any[] }) => {
-    const activitiesWeek = values.days
+
+  interface ActivityTime {
+    start: string;
+    end: string;
+  }
+
+  interface ActivityWeek {
+    dayWeek: string;
+    activityTime: ActivityTime[];
+  }
+
+  interface ActivityModel {
+    title: string;
+    author: string;
+    authorEmail: string;
+    activitiesWeek: ActivityWeek[];
+    startDate: string;
+    endDate: string;
+    presenceActivity: any[];
+    createdAt: string;
+    updatedAt: string;
+    category: string;
+  }
+
+  const activityModel: ActivityModel = {
+    title: "",
+    author: "",
+    authorEmail: "",
+    activitiesWeek: [],
+    startDate: "",
+    endDate: "",
+    presenceActivity: [],
+    createdAt: "",
+    updatedAt: "",
+    category: "",
+  };
+
+  const handleRegister = async (values: {
+    disciplineName: string;
+    days: any[];
+    startDate: string;
+    endDate: string;
+  }) => {
+    const user = await onGetUser!();
+    const activitiesWeek: ActivityWeek[] = values.days
       .filter((item) => item.isChecked)
       .map((item) => {
         const dayMapping = mapWeek.find((dayMap) => dayMap.day === item.day);
         if (dayMapping) {
           return {
-            dayWeek: dayMapping.number,
+            dayWeek: dayMapping.number.toString(),
             activityTime: [{ start: item.startTime, end: item.endTime }],
           };
         }
+        return undefined;
       })
-      .filter(Boolean);
-    activitiesWeek.forEach((item: any) => {
-      console.log(item);
-    });
+      .filter((activity): activity is ActivityWeek => activity !== undefined);
+    const date = new Date();
+    const timeZoneOffset = -3 * 60;
+    date.setMinutes(date.getMinutes() + timeZoneOffset);
+    const isoString = date.toISOString();
+    const activity: ActivityModel = {
+      ...activityModel,
+      title: values.disciplineName,
+      authorEmail: user.email,
+      author: user.name,
+      activitiesWeek,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      createdAt: isoString,
+      updatedAt: isoString,
+      category: "Activity",
+    };
+    try {
+      const response = await axios.post(`${API_URL}/activities`, activity);
+      router.replace("/(tabs)/home");
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error message:", error.message);
+        if (error.response) {
+          console.error("Status:", error.response.status);
+          console.error("Data:", error.response.data);
+        } else if (error.request) {
+          console.error("Request:", error.request);
+        } else {
+          console.error("Error:", error.message);
+        }
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
   };
 
   return (
@@ -99,7 +179,12 @@ const RegisterDisciplineScreen: React.FC = () => {
         </View>
       </LinearGradient>
       <Formik
-        initialValues={{ disciplineName: "", days: initialDays }}
+        initialValues={{
+          disciplineName: "",
+          days: initialDays,
+          startDate: "",
+          endDate: "",
+        }}
         onSubmit={handleRegister}
       >
         {({
@@ -118,6 +203,24 @@ const RegisterDisciplineScreen: React.FC = () => {
               onBlur={handleBlur("disciplineName")}
               value={values.disciplineName}
             />
+            <View style={styles.inputDateContainer}>
+              <TextInput
+                style={styles.inputDate}
+                placeholder="Data início"
+                placeholderTextColor="#888"
+                onChangeText={handleChange("startDate")}
+                onBlur={handleBlur("startDate")}
+                value={values.startDate}
+              />
+              <TextInput
+                style={styles.inputDate}
+                placeholder="Data final"
+                placeholderTextColor="#888"
+                onChangeText={handleChange("endDate")}
+                onBlur={handleBlur("endDate")}
+                value={values.endDate}
+              />
+            </View>
             {values.days.map((day, index) => (
               <View key={index} style={styles.dayContainer}>
                 <CustomCheckbox
@@ -240,7 +343,24 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 10,
+    backgroundColor: "#f9f9f9",
+  },
+  inputDateContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  inputDate: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 16,
+    width: "100%",
+    margin: 1,
     backgroundColor: "#f9f9f9",
   },
   dayContainer: {
