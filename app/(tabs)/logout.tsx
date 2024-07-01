@@ -55,9 +55,9 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center", // Centraliza verticalmente
-    alignItems: "center", // Centraliza horizontalmente
-    backgroundColor: "#f0f0f0", // Cor de fundo opcional
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
   },
   banner: {
     height: 200,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: "100%",
-    alignItems: "center", // Centraliza o botão dentro do contêiner
+    alignItems: "center",
   },
   buttonGradient: {
     justifyContent: "center",

@@ -16,7 +16,7 @@ import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const RegisterDisciplineScreen: React.FC = () => {
-  const initialDays = [
+  const [initialDays, setDays] = useState([
     { day: "Segunda-feira", isChecked: false, startTime: "", endTime: "" },
     { day: "Terça-feira", isChecked: false, startTime: "", endTime: "" },
     { day: "Quarta-feira", isChecked: false, startTime: "", endTime: "" },
@@ -24,10 +24,55 @@ const RegisterDisciplineScreen: React.FC = () => {
     { day: "Sexta-feira", isChecked: false, startTime: "", endTime: "" },
     { day: "Sábado", isChecked: false, startTime: "", endTime: "" },
     { day: "Domingo", isChecked: false, startTime: "", endTime: "" },
-  ];
+  ]);
 
-  const handleRegister = (values: any) => {
-    console.log(values);
+  const addDayAtPosition = (
+    position: number,
+    newDay: {
+      day: string;
+      isChecked: boolean;
+      startTime: string;
+      endTime: string;
+    },
+    setFieldValue: any
+  ) => {
+    const newDays = [...initialDays];
+    newDays.splice(position, 0, newDay);
+    setDays(newDays);
+    setFieldValue("days", newDays);
+  };
+
+  const removeDayAtPosition = (position: number, setFieldValue: any) => {
+    const newDays = [...initialDays];
+    newDays.splice(position, 1);
+    setDays(newDays);
+    setFieldValue("days", newDays);
+  };
+  const mapWeek = [
+    { day: "Segunda-feira", number: 1 },
+    { day: "Terça-feira", number: 2 },
+    { day: "Quarta-feira", number: 3 },
+    { day: "Quinta-feira", number: 4 },
+    { day: "Sexta-feira", number: 5 },
+    { day: "Sábado", number: 6 },
+    { day: "Domingo", number: 7 },
+  ];
+  const handleRegister = (values: { disciplineName: string; days: any[] }) => {
+    const activitiesWeek = values.days
+      .filter((item) => item.isChecked)
+      .map((item) => {
+        const dayMapping = mapWeek.find((dayMap) => dayMap.day === item.day);
+        if (dayMapping) {
+          return {
+            dayWeek: dayMapping.number,
+            activityTime: [{ start: item.startTime, end: item.endTime }],
+          };
+        }
+      })
+      .filter(Boolean);
+    activitiesWeek.forEach((item: any) => {
+      console.log(item);
+    });
   };
 
   return (
@@ -106,9 +151,40 @@ const RegisterDisciplineScreen: React.FC = () => {
                   value={day.endTime}
                   editable={day.isChecked}
                 />
+                <TouchableOpacity
+                  onPress={() =>
+                    addDayAtPosition(index + 1, day, setFieldValue)
+                  }
+                  style={styles.buttonContainerAdd}
+                >
+                  <LinearGradient
+                    colors={["#5859e9", "#52337c"]}
+                    style={styles.buttonGradientAdd}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                  >
+                    <Text style={styles.buttonText}>+</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => removeDayAtPosition(index, setFieldValue)}
+                  style={styles.buttonContainerRemove}
+                >
+                  <LinearGradient
+                    colors={["red", "red"]}
+                    style={styles.buttonGradientRemove}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                  >
+                    <Text style={styles.buttonText}>-</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
               </View>
             ))}
-            <TouchableOpacity onPress={() => handleSubmit()}>
+            <TouchableOpacity
+              onPress={() => handleSubmit()}
+              style={styles.buttonContainer}
+            >
               <LinearGradient
                 colors={["#5859e9", "#52337c"]}
                 style={styles.buttonGradient}
@@ -190,15 +266,50 @@ const styles = StyleSheet.create({
   disabledInput: {
     backgroundColor: "#e0e0e0",
   },
+  buttonGradientRemove: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    overflow: "hidden",
+    height: 50,
+    width: "100%",
+  },
+  buttonContainerRemove: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "10%",
+    padding: 5,
+  },
+  buttonGradientAdd: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    overflow: "hidden",
+    height: 50,
+    width: "100%",
+  },
+  buttonContainerAdd: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "10%",
+    padding: 5,
+  },
+  buttonContainer: {
+    width: "100%",
+  },
   buttonGradient: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
     overflow: "hidden",
-    marginTop: 20,
+    marginTop: 10,
     height: 50,
-    width: "60%",
+    width: "100%",
   },
   buttonText: {
     textAlign: "center",
