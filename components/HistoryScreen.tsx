@@ -11,6 +11,7 @@ import { Picker } from "@react-native-picker/picker";
 import DropDownPicker from "react-native-dropdown-picker";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { Link } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -127,7 +128,9 @@ const HistoryScreen: React.FC = () => {
               end={{ x: 1, y: 0 }}
               style={styles.detailsButtonInner}
             >
-              <Text style={styles.detailsButtonText}>Detalhes</Text>
+              <Link href="details">
+                <Text style={styles.detailsButtonText}>Detalhes</Text>
+              </Link>
             </LinearGradient>
           </TouchableOpacity>
         </View>
