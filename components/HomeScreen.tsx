@@ -130,10 +130,10 @@ const HomeScreen: React.FC = () => {
           const act = activities?.data.flatMap((item: any) => {
             return item.activitiesWeek.flatMap((it: any) => {
               if (it.dayWeek === dayIndex.toString()) {
-                const dt_ = it.activityTime.map((dt: any) => {
-                  return " " + dt.start + "hr às " + dt.end + "hr";
+                const activities = it.activityTime.map((dt: any) => {
+                  return `${item.title} - ${dt.start}hr às ${dt.end}hr`;
                 });
-                return item.title + " - " + dt_;
+                return activities;
               }
               return [];
             });

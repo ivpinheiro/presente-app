@@ -66,6 +66,7 @@ const RegisterDisciplineScreen: React.FC = () => {
   interface ActivityTime {
     start: string;
     end: string;
+    presenceActivity: [];
   }
 
   interface ActivityWeek {
@@ -80,7 +81,6 @@ const RegisterDisciplineScreen: React.FC = () => {
     activitiesWeek: ActivityWeek[];
     startDate: string;
     endDate: string;
-    presenceActivity: any[];
     createdAt: string;
     updatedAt: string;
     category: string;
@@ -93,7 +93,6 @@ const RegisterDisciplineScreen: React.FC = () => {
     activitiesWeek: [],
     startDate: "",
     endDate: "",
-    presenceActivity: [],
     createdAt: "",
     updatedAt: "",
     category: "",
@@ -113,7 +112,13 @@ const RegisterDisciplineScreen: React.FC = () => {
         if (dayMapping) {
           return {
             dayWeek: dayMapping.number.toString(),
-            activityTime: [{ start: item.startTime, end: item.endTime }],
+            activityTime: [
+              {
+                start: item.startTime,
+                end: item.endTime,
+                presenceActivity: [],
+              },
+            ],
           };
         }
         return undefined;
