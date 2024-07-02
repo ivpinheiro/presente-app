@@ -198,7 +198,7 @@ const HistoryScreen: React.FC = () => {
               end={{ x: 1, y: 0 }}
               style={styles.detailsButtonInner}
             >
-              <Link href="details">
+              <Link href="details" style={styles.detailsButtonTextContainer}>
                 <Text style={styles.detailsButtonText}>Detalhes</Text>
               </Link>
             </LinearGradient>
@@ -446,11 +446,19 @@ const styles = StyleSheet.create({
   detailsButtonInner: {
     borderRadius: 5,
   },
+  detailsButtonTextContainer: {
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
+    width: "100%",
+    textAlign: "center",
+  },
   detailsButtonText: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 40,
     textAlign: "center",
+    width: "100%",
   },
   buttonGradient: {
     display: "flex",

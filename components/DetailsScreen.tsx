@@ -8,31 +8,41 @@ import {
   Pressable,
 } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { Picker } from '@react-native-picker/picker';
-
+import { Picker } from "@react-native-picker/picker";
+import { Link } from "expo-router";
 const { width } = Dimensions.get("window");
 
 const DetailsScreen: React.FC = () => {
   const activityName = "Atividade";
 
   const currentDate = new Date();
-  const currentDay = currentDate.getDate().toString().padStart(2, '0');
+  const currentDay = currentDate.getDate().toString().padStart(2, "0");
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear().toString();
 
   const months = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
   ];
 
   const weekDays = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
 
   const [startDay, setStartDay] = useState(currentDay);
-  const [startMonth, setStartMonth] = useState(months[currentMonth]); 
+  const [startMonth, setStartMonth] = useState(months[currentMonth]);
   const [startYear, setStartYear] = useState(currentYear);
 
   const [endDay, setEndDay] = useState(currentDay);
-  const [endMonth, setEndMonth] = useState(months[currentMonth]); 
+  const [endMonth, setEndMonth] = useState(months[currentMonth]);
   const [endYear, setEndYear] = useState(currentYear);
 
   const [percentage, setPercentage] = useState<number | null>(null);
@@ -65,10 +75,20 @@ const DetailsScreen: React.FC = () => {
     const formatDate = (day: string, month: string, year: string) => {
       const monthToNumber = (month: string) => {
         const monthsArray = [
-          "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-          "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+          "Janeiro",
+          "Fevereiro",
+          "Março",
+          "Abril",
+          "Maio",
+          "Junho",
+          "Julho",
+          "Agosto",
+          "Setembro",
+          "Outubro",
+          "Novembro",
+          "Dezembro",
         ];
-        return (monthsArray.indexOf(month) + 1).toString().padStart(2, '0');
+        return (monthsArray.indexOf(month) + 1).toString().padStart(2, "0");
       };
       return `${year}-${monthToNumber(month)}-${day}`;
     };
@@ -97,8 +117,9 @@ const DetailsScreen: React.FC = () => {
     const newDaysStatus = new Map<string, string>();
 
     daysBetween.forEach((date) => {
-      const randomStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
-      const dateKey = date.toISOString().split('T')[0]; // Formato: YYYY-MM-DD
+      const randomStatus =
+        statusOptions[Math.floor(Math.random() * statusOptions.length)];
+      const dateKey = date.toISOString().split("T")[0]; // Formato: YYYY-MM-DD
       newDaysStatus.set(dateKey, randomStatus);
     });
 
@@ -107,23 +128,31 @@ const DetailsScreen: React.FC = () => {
 
   const renderCalendar = () => {
     if (percentage !== null) {
-      const start = new Date(`${startYear}-${(months.indexOf(startMonth) + 1).toString().padStart(2, '0')}-${startDay.padStart(2, '0')}`);
-      const end = new Date(`${endYear}-${(months.indexOf(endMonth) + 1).toString().padStart(2, '0')}-${endDay.padStart(2, '0')}`);
+      const start = new Date(
+        `${startYear}-${(months.indexOf(startMonth) + 1)
+          .toString()
+          .padStart(2, "0")}-${startDay.padStart(2, "0")}`
+      );
+      const end = new Date(
+        `${endYear}-${(months.indexOf(endMonth) + 1)
+          .toString()
+          .padStart(2, "0")}-${endDay.padStart(2, "0")}`
+      );
       const daysBetween = getDaysBetweenDates(start, end);
 
       let calendarRows: JSX.Element[] = [];
       let currentRow: JSX.Element[] = [];
-      
-      
+
       calendarRows.push(
         <View key="header" style={styles.calendarRow}>
           {weekDays.map((day, index) => (
-            <Text key={index} style={styles.calendarDayOfWeek}>{day}</Text>
+            <Text key={index} style={styles.calendarDayOfWeek}>
+              {day}
+            </Text>
           ))}
         </View>
       );
 
-      
       const firstDayOfWeek = start.getDay();
       for (let i = 0; i < firstDayOfWeek; i++) {
         currentRow.push(
@@ -133,17 +162,16 @@ const DetailsScreen: React.FC = () => {
         );
       }
 
-      
       daysBetween.forEach((date, index) => {
         const dayOfWeek = date.getDay(); // 0 (DOM) to 6 (SAB)
         const dayOfMonth = date.getDate();
-        const dateKey = date.toISOString().split('T')[0];
+        const dateKey = date.toISOString().split("T")[0];
         const status = daysStatus.get(dateKey) || "";
 
         let backgroundColor = "#E0E0E0";
-        if (status === "A") backgroundColor = "green"; 
+        if (status === "A") backgroundColor = "green";
         if (status === "P") backgroundColor = "#ffcccc";
-        if (status === "J") backgroundColor = "gray"; 
+        if (status === "J") backgroundColor = "gray";
 
         if (dayOfWeek === 0 && currentRow.length > 0) {
           calendarRows.push(
@@ -155,7 +183,10 @@ const DetailsScreen: React.FC = () => {
         }
 
         currentRow.push(
-          <View key={index} style={[styles.calendarDayContainer, { backgroundColor }]}>
+          <View
+            key={index}
+            style={[styles.calendarDayContainer, { backgroundColor }]}
+          >
             <Text style={styles.calendarDayOfMonth}>{dayOfMonth}</Text>
           </View>
         );
@@ -163,7 +194,10 @@ const DetailsScreen: React.FC = () => {
         if (index === daysBetween.length - 1) {
           while (currentRow.length < 7) {
             currentRow.push(
-              <View key={`empty-end-${currentRow.length}`} style={styles.calendarDayContainer}>
+              <View
+                key={`empty-end-${currentRow.length}`}
+                style={styles.calendarDayContainer}
+              >
                 <Text style={styles.calendarDayOfMonth}></Text>
               </View>
             );
@@ -176,11 +210,7 @@ const DetailsScreen: React.FC = () => {
         }
       });
 
-      return (
-        <View style={styles.calendarContainer}>
-          {calendarRows}
-        </View>
-      );
+      return <View style={styles.calendarContainer}>{calendarRows}</View>;
     }
     return null;
   };
@@ -188,16 +218,23 @@ const DetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Pressable style={styles.backButtonContainer}>
-          <Ionicons
-            name="arrow-back-sharp"
-            size={24}
-            color="black"
-            style={styles.backButton}
-          />
-        </Pressable>
+        <Link href="/(tabs)/manager" asChild>
+          <Pressable style={styles.backButtonContainer}>
+            <Ionicons
+              name="arrow-back-sharp"
+              size={24}
+              color="black"
+              style={styles.backButton}
+            />
+          </Pressable>
+        </Link>
         <Text style={styles.activityName}>{activityName}</Text>
-        <FontAwesome5 name="calendar-check" size={34} color="black" style={styles.icon} />
+        <FontAwesome5
+          name="calendar-check"
+          size={34}
+          color="black"
+          style={styles.icon}
+        />
       </View>
       <View style={styles.attendanceContainer}>
         <Text style={styles.attendanceText}>Presença</Text>
@@ -222,8 +259,12 @@ const DetailsScreen: React.FC = () => {
           style={styles.picker}
           onValueChange={(itemValue) => setStartDay(itemValue)}
         >
-          {[...Array(31).keys()].map(i => (
-            <Picker.Item key={i} label={`${(i + 1).toString().padStart(2, '0')}`} value={`${(i + 1).toString().padStart(2, '0')}`} />
+          {[...Array(31).keys()].map((i) => (
+            <Picker.Item
+              key={i}
+              label={`${(i + 1).toString().padStart(2, "0")}`}
+              value={`${(i + 1).toString().padStart(2, "0")}`}
+            />
           ))}
         </Picker>
         <Picker
@@ -240,7 +281,7 @@ const DetailsScreen: React.FC = () => {
           style={styles.picker}
           onValueChange={(itemValue) => setStartYear(itemValue)}
         >
-          {[...Array(31).keys()].map(i => (
+          {[...Array(31).keys()].map((i) => (
             <Picker.Item key={i} label={`${2000 + i}`} value={`${2000 + i}`} />
           ))}
         </Picker>
@@ -252,8 +293,12 @@ const DetailsScreen: React.FC = () => {
           style={styles.picker}
           onValueChange={(itemValue) => setEndDay(itemValue)}
         >
-          {[...Array(31).keys()].map(i => (
-            <Picker.Item key={i} label={`${(i + 1).toString().padStart(2, '0')}`} value={`${(i + 1).toString().padStart(2, '0')}`} />
+          {[...Array(31).keys()].map((i) => (
+            <Picker.Item
+              key={i}
+              label={`${(i + 1).toString().padStart(2, "0")}`}
+              value={`${(i + 1).toString().padStart(2, "0")}`}
+            />
           ))}
         </Picker>
         <Picker
@@ -270,7 +315,7 @@ const DetailsScreen: React.FC = () => {
           style={styles.picker}
           onValueChange={(itemValue) => setEndYear(itemValue)}
         >
-          {[...Array(31).keys()].map(i => (
+          {[...Array(31).keys()].map((i) => (
             <Picker.Item key={i} label={`${2000 + i}`} value={`${2000 + i}`} />
           ))}
         </Picker>
@@ -365,7 +410,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     marginTop: 20,
-    width: width - 40, 
+    width: width - 40,
   },
   calendarRow: {
     flexDirection: "row",
@@ -376,7 +421,7 @@ const styles = StyleSheet.create({
   calendarDayOfWeek: {
     fontSize: 16,
     fontWeight: "bold",
-    textAlign: 'center',
+    textAlign: "center",
     flex: 1,
   },
   calendarDayContainer: {
@@ -389,8 +434,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
     padding: 10,
     borderRadius: 5,
-    textAlign: 'center',
-    minWidth: 40, 
+    textAlign: "center",
+    minWidth: 40,
   },
 });
 
