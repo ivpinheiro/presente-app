@@ -12,6 +12,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { API_URL } from "@/app/context/AuthContext";
 import axios from "axios";
+import { Link } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -197,7 +198,9 @@ const HistoryScreen: React.FC = () => {
               end={{ x: 1, y: 0 }}
               style={styles.detailsButtonInner}
             >
-              <Text style={styles.detailsButtonText}>Detalhes</Text>
+              <Link href="details">
+                <Text style={styles.detailsButtonText}>Detalhes</Text>
+              </Link>
             </LinearGradient>
           </TouchableOpacity>
         </View>
