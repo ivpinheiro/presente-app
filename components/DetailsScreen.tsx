@@ -13,7 +13,7 @@ import { Link } from "expo-router";
 const { width } = Dimensions.get("window");
 
 const DetailsScreen: React.FC = () => {
-  const activityName = "Atividade";
+  const activityName = "Cálculo";
 
   const currentDate = new Date();
   const currentDay = currentDate.getDate().toString().padStart(2, "0");
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   activityName: {
-    fontSize: 24,
+    fontSize: 44,
     fontWeight: "bold",
     textAlign: "center",
     flex: 1,
