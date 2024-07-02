@@ -98,7 +98,7 @@ const DetailsScreen: React.FC = () => {
 
     daysBetween.forEach((date) => {
       const randomStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
-      const dateKey = date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+      const dateKey = date.toISOString().split('T')[0]; // Formato: YYYY-MM-DD
       newDaysStatus.set(dateKey, randomStatus);
     });
 
@@ -123,7 +123,7 @@ const DetailsScreen: React.FC = () => {
         </View>
       );
 
-      // Add empty cells for the first row
+      
       const firstDayOfWeek = start.getDay();
       for (let i = 0; i < firstDayOfWeek; i++) {
         currentRow.push(
@@ -133,7 +133,7 @@ const DetailsScreen: React.FC = () => {
         );
       }
 
-      // Calculate days rendering
+      
       daysBetween.forEach((date, index) => {
         const dayOfWeek = date.getDay(); // 0 (DOM) to 6 (SAB)
         const dayOfMonth = date.getDate();
@@ -141,9 +141,9 @@ const DetailsScreen: React.FC = () => {
         const status = daysStatus.get(dateKey) || "";
 
         let backgroundColor = "#E0E0E0";
-        if (status === "A") backgroundColor = "#ffcccc"; // Light Red for Ausente
-        if (status === "P") backgroundColor = "green"; // Green for Presente
-        if (status === "J") backgroundColor = "gray"; // Gray for Justificado
+        if (status === "A") backgroundColor = "#ffcccc"; 
+        if (status === "P") backgroundColor = "green"; 
+        if (status === "J") backgroundColor = "gray"; 
 
         if (dayOfWeek === 0 && currentRow.length > 0) {
           calendarRows.push(
@@ -365,28 +365,29 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     marginTop: 20,
+    width: width - 40, 
   },
   calendarRow: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
-    width: width,
+    justifyContent: "space-between",
+    width: "100%",
     marginBottom: 10,
   },
   calendarDayOfWeek: {
     fontSize: 16,
     fontWeight: "bold",
-    width: (width / 7) - 10,
     textAlign: 'center',
+    flex: 1,
   },
   calendarDayContainer: {
     alignItems: "center",
     marginBottom: 10,
-    width: (width / 7) - 10,
+    flex: 1,
   },
   calendarDayOfMonth: {
     fontSize: 16,
     marginTop: 0,
-    padding: 5,
+    padding: 10,
     borderRadius: 5,
     textAlign: 'center',
   },
