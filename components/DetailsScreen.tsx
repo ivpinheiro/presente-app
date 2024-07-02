@@ -107,14 +107,14 @@ const DetailsScreen: React.FC = () => {
 
   const renderCalendar = () => {
     if (percentage !== null) {
-      const start = new Date(`${startYear}-${startMonth.padStart(2, '0')}-${startDay.padStart(2, '0')}`);
-      const end = new Date(`${endYear}-${endMonth.padStart(2, '0')}-${endDay.padStart(2, '0')}`);
+      const start = new Date(`${startYear}-${(months.indexOf(startMonth) + 1).toString().padStart(2, '0')}-${startDay.padStart(2, '0')}`);
+      const end = new Date(`${endYear}-${(months.indexOf(endMonth) + 1).toString().padStart(2, '0')}-${endDay.padStart(2, '0')}`);
       const daysBetween = getDaysBetweenDates(start, end);
 
       let calendarRows: JSX.Element[] = [];
       let currentRow: JSX.Element[] = [];
       
-      // Header row with week days
+      
       calendarRows.push(
         <View key="header" style={styles.calendarRow}>
           {weekDays.map((day, index) => (
@@ -141,8 +141,8 @@ const DetailsScreen: React.FC = () => {
         const status = daysStatus.get(dateKey) || "";
 
         let backgroundColor = "#E0E0E0";
-        if (status === "A") backgroundColor = "#ffcccc"; 
-        if (status === "P") backgroundColor = "green"; 
+        if (status === "A") backgroundColor = "green"; 
+        if (status === "P") backgroundColor = "#ffcccc";
         if (status === "J") backgroundColor = "gray"; 
 
         if (dayOfWeek === 0 && currentRow.length > 0) {
@@ -390,6 +390,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     textAlign: 'center',
+    minWidth: 40, 
   },
 });
 
