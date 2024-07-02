@@ -13,7 +13,7 @@ import { Picker } from '@react-native-picker/picker';
 const { width } = Dimensions.get("window");
 
 const DetailsScreen: React.FC = () => {
-  const activityName = "Atividade";
+  const activityName = "Cálculo";
 
   const currentDate = new Date();
   const currentDay = currentDate.getDate().toString().padStart(2, '0');
@@ -197,7 +197,7 @@ const DetailsScreen: React.FC = () => {
           />
         </Pressable>
         <Text style={styles.activityName}>{activityName}</Text>
-        <FontAwesome5 name="calendar-check" size={34} color="black" style={styles.icon} />
+        <FontAwesome5 name="calendar-check" size={44} color="black" style={styles.icon} />
       </View>
       <View style={styles.attendanceContainer}>
         <Text style={styles.attendanceText}>Presença</Text>
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   activityName: {
-    fontSize: 24,
+    fontSize: 44,
     fontWeight: "bold",
     textAlign: "center",
     flex: 1,
