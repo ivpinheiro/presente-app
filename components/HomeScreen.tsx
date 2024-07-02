@@ -80,7 +80,6 @@ const HomeScreen: React.FC = () => {
       if (axios.isAxiosError(error)) {
         console.error("Error message:", error.message);
         if (error.response) {
-          console.error("Status:", error.response.status);
           console.error("Data:", error.response.data);
         } else if (error.request) {
           console.error("Request:", error.request);
@@ -132,31 +131,33 @@ const HomeScreen: React.FC = () => {
           // Obter atividades
           const activities = await getActivities();
           const dayIndex = new Date().getDay();
-          const actGlobal = activities?.data.flatMap((item: any) => {
-            return item.activitiesWeek.flatMap((it: any) => {
-              if (it.dayWeek === dayIndex.toString()) {
-                return item;
-              }
-              return [];
+          if (activities?.data) {
+            const actGlobal = activities?.data?.flatMap((item: any) => {
+              return item.activitiesWeek.flatMap((it: any) => {
+                if (it.dayWeek === dayIndex.toString()) {
+                  return item;
+                }
+                return [];
+              });
             });
-          });
-          setActivitiesGlobal(actGlobal ? actGlobal : []);
-          const act = activities?.data.flatMap((item: any) => {
-            return item.activitiesWeek.flatMap((it: any) => {
-              if (it.dayWeek === dayIndex.toString()) {
-                const activities = it.activityTime.map((dt: any) => {
-                  return {
-                    name: `${item.title} - ${dt.start}hr às ${dt.end}hr`,
-                    id: item._id,
-                    start: dt.start,
-                  };
-                });
-                return activities;
-              }
-              return [];
+            setActivitiesGlobal(actGlobal ? actGlobal : []);
+            const act = activities?.data?.flatMap((item: any) => {
+              return item.activitiesWeek.flatMap((it: any) => {
+                if (it.dayWeek === dayIndex.toString()) {
+                  const activities = it.activityTime.map((dt: any) => {
+                    return {
+                      name: `${item.title} - ${dt.start}hr às ${dt.end}hr`,
+                      id: item._id,
+                      start: dt.start,
+                    };
+                  });
+                  return activities;
+                }
+                return [];
+              });
             });
-          });
-          setDayActivities(act);
+            setDayActivities(act);
+          }
         } catch (error) {
           console.error("Error fetching activities:", error);
         }
@@ -191,6 +192,8 @@ const HomeScreen: React.FC = () => {
   // Aqui pode ser usado para calcular o percentual de precença e enviar de volta pro backed
   const handlePresence = async () => {
     if (selectedActivityIndex !== null) {
+      setPresenceCount((prevCount) => prevCount + 1);
+      setSelectedActivityIndex(null);
       const updatedActivity = activitiesGlobal.map((item: any) => {
         if (item._id === dayActivities[selectedActivityIndex].id) {
           return {
@@ -250,8 +253,6 @@ const HomeScreen: React.FC = () => {
           console.error("Unexpected error:", error);
         }
       }
-      setPresenceCount((prevCount) => prevCount + 1);
-      setSelectedActivityIndex(null);
     }
   };
 
@@ -441,7 +442,7 @@ const HomeScreen: React.FC = () => {
         />
       </View>
       <View style={styles.activitiesContainer}>
-        {dayActivities.map((activity, index) => (
+        {dayActivities?.map((activity, index) => (
           <TouchableOpacity
             key={index}
             style={[
